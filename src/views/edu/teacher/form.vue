@@ -25,6 +25,25 @@
       </el-form-item>
 
       <!-- 讲师头像：TODO -->
+      <el-form-item label="讲师头像">
+        <!-- 头像缩略图 -->
+        <pan-thumb :image="teacher.avatar" />
+        <!-- 上传文件的按钮 -->
+        <el-button type="primary" icon="upload" @click="imagecropperShow=true">更换头像</el-button>
+      </el-form-item>
+
+      <!-- 头像 -->
+      <image-cropper
+        v-show="imagecropperShow"
+        :width="300"
+        :height="300"
+        :key="imagecropperKey"
+        :url="BASE_API + '/admin/oss/file/upload'"
+        field="file"
+        lang-type="en"
+        @close="close"
+        @crop-upload-success="cropSuccess"
+      />
 
       <!-- 我们这个保存是复用的，如果是新增页面就是保存，如果是修改页面就是修改！ -->
       <el-button :disabled="saveBtnDisabled" type="primary" @click="saveOrUpdate">保存</el-button>
@@ -33,33 +52,39 @@
 </template>
 
 <script>
-import teacher from "@/api/edu/teacher";
+import teacher from "@/api/edu/teacher"
+import ImageCropper from "@/components/ImageCropper"
+import PanThumb from "@/components/PanThumb"
 // 定义绑定我们表单的数据
 const defaultForm = {
-  name: "",
-  sort: 1,
-  level: 2,
-  career: "",
-  intro: "",
-  avatar: ""
-};
+  name: '',
+  sort: 0,
+  level: 1,
+  career: '',
+  intro: '',
+  avatar: 'https://dakuzai-edu.oss-cn-beijing.aliyuncs.com/avatar/dafault.jpg'
+}
 export default {
+  components: { ImageCropper, PanThumb },
   // 因为元素使用了双向绑定，编写数据！
   data() {
     return {
       teacher: defaultForm,
-      saveBtnDisabled: false // 保存按钮的禁用
-    };
+      saveBtnDisabled: false, // 保存按钮的禁用
+      imagecropperShow: false,
+      imagecropperKey: 0,
+      BASE_API: process.env.BASE_API
+    }
   },
   //watch监视，当我们的路由发生了变化，就执行这个方法
   watch: {
-    $router(to,from){
+    $router(to, from) {
       this.init()
     }
   },
   // 钩子函数！ created 在页面渲染前调用方法, 如果页面是同一个，数据不会刷新！只会进行一次！
   created() {
-    console.log('created')
+    console.log("created")
     this.init()
   },
 
@@ -88,25 +113,31 @@ export default {
 
     // 更新
     updateData() {
-      teacher.updateById(this.teacher).then(response => {
-        return this.$message({
-          type: 'success',
-          message: '修改成功！!'
+      teacher
+        .updateById(this.teacher)
+        .then(response => {
+          return this.$message({
+            type: "success",
+            message: "修改成功！!"
+          })
         })
-      }).then(response => {
-        this.$router.push({ path: '/edu/teacher' })
-      })
+        .then(response => {
+          this.$router.push({ path: "/edu/teacher" })
+        })
     },
     // 保存 ，如果自己理解逻辑！重启一下！
     saveData() {
-      teacher.save(this.teacher).then(response => {
-        return this.$message({
-          type: 'success',
-          message: '保存成功！!'
+      teacher
+        .save(this.teacher)
+        .then(response => {
+          return this.$message({
+            type: "success",
+            message: "保存成功！!"
+          })
         })
-      }).then(response => {
-        this.$router.push({ path: '/edu/teacher' })
-      })
+        .then(response => {
+          this.$router.push({ path: "/edu/teacher" })
+        })
     },
 
     // 拿到后端的数据之后，去查询数据即可！
@@ -116,8 +147,20 @@ export default {
         this.teacher = response.data.item
       })
     },
+    // 上传成功
+    cropSuccess(data) {
+      console.log(data)
+      this.imagecropperShow = false
+      this.teacher.avatar = data.url
+    },
+
+    // 关闭
+    close() {
+      this.imagecropperShow = false
+    }
+
   }
-};
+}
 </script>
 
 <style>
