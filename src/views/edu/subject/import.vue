@@ -21,15 +21,20 @@
           name="file"
           accept="application/vnd.ms-excel"
         >
-          <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+          <el-button
+            slot="trigger"
+            size="small"
+            type="primary">选取文件</el-button>
           <el-button
             :loading="loading"
             style="margin-left: 10px;"
             size="small"
             type="success"
             @click="submitUpload"
-          >{{fileUploadBtnText}}</el-button>
-          <div slot="tip" class="el-upload__tip">只能上传excel文件，仅且只能上传一个</div>
+          >{{ fileUploadBtnText }}</el-button>
+          <div
+            slot="tip"
+            class="el-upload__tip">只能上传excel文件，仅且只能上传一个</div>
         </el-upload>
       </el-form-item>
     </el-form>
@@ -40,52 +45,53 @@
 export default {
   data() {
     return {
-      BASE_API: process.env.BASE_API, //后端接口API地址
-      OSS_PATH: process.env.OSS_PATH, //阿里云OSS地址
-      importBtnDisabled: false, //按钮禁用
-      fileUploadBtnText: "上传到服务器",
-      loading: false
-    };
+      'BASE_API': process.env.BASE_API, // 后端接口API地址
+      'OSS_PATH': process.env.OSS_PATH, // 阿里云OSS地址
+      'importBtnDisabled': false, // 按钮禁用
+      'fileUploadBtnText': '上传到服务器',
+      'loading': false
+    }
   },
-  methods: {
+  'methods': {
     submitUpload() {
-      this.fileUploadBtnText = "正在上传"
+      this.fileUploadBtnText = '正在上传'
       this.importBtnDisabled = true
       this.loading = true
       this.$refs.upload.submit()
     },
     fileUploadSuccess(response) {
       if (response.success === true) {
-        this.fileUploadBtnText = "导入成功！"
+        this.fileUploadBtnText = '导入成功！'
         this.loading = false
         this.$message({
-          type: "success",
-          message: response.message
+          'type': 'success',
+          'message': response.message
         })
       } else {
-        this.fileUploadBtnText = "导入失败！"
+        this.fileUploadBtnText = '导入失败！'
         this.loading = false
         const message = response.data.errorMsgList
         let msgString = '<ul>'
+
         message.forEach(msg => {
-            msgString += `<li>${msg}</li>`
+          msgString += `<li>${msg}</li>`
         })
-        msgString += '</ul>' 
-        this.$alert(msgString,response.message, {
-            dangerouslyUseHTMLString: true
+        msgString += '</ul>'
+        this.$alert(msgString, response.message, {
+          'dangerouslyUseHTMLString': true
         })
       }
     },
     fileUploadErro() {
-        this.fileUploadBtnText = "导入失败！"
-        this.loading = false
-        this.$message({
-          type: "error",
-          message: '导入失败！'
-        })
+      this.fileUploadBtnText = '导入失败！'
+      this.loading = false
+      this.$message({
+        'type': 'error',
+        'message': '导入失败！'
+      })
     }
   }
-};
+}
 </script>
 
 <style>

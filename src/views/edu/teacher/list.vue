@@ -106,7 +106,7 @@ export default {
     fetchData() {
       console.log('加载列表')
       teacher.getPageList(this.page, this.pageSize, this.searchObj).then(response => {
-        console.log(response); // 可以将数据渲染到页面
+        console.log(response) // 可以将数据渲染到页面
         if (response.success === true) {
           this.list = response.data.rows
           this.total = response.data.total
@@ -117,8 +117,8 @@ export default {
 
     // 清空数据
     resetData() {
-      this.searchObj = {},
-        this.fetchData()
+      this.searchObj = {}
+      this.fetchData()
     },
     // 删除用户
     removeDataById(id) {
@@ -127,19 +127,19 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => { // 成功
-        return teacher.removeById(id);
+        return teacher.removeById(id)
       }).then(() => { // 如果上一个then成功执行则会执行此处的then进行回调
-        this.fetchData();
+        this.fetchData()
         this.$message({
           type: 'success',
           message: '删除成功！'
-        });
+        })
       }).catch(() => {
         this.$message({
           type: 'info',
           message: '已取消删除'
-        });
-      });
+        })
+      })
     }
 
   }
